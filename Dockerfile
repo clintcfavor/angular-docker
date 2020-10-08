@@ -6,14 +6,20 @@ COPY ./ ./
 
 RUN npm install
 
-EXPOSE 4200
+COPY /dist ./
+
+# EXPOSE 4200
 
 CMD ["npm", "start"]
 
-# FROM nginx:1.16.0-alpine as prod
+FROM nginx:1.16.0-alpine as prod
 
-# COPY --from=build /usr/src/app/dist/angular-docker /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/angular-docker /usr/share/nginx/html
 
-# EXPOSE 80
+RUN rm /etc/nginx/conf.d/default.conf
 
-# CMD ["nginx", "-g", "daemon off;"]
+COPY nginx.conf /etc/nginx/conf.d
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
